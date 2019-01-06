@@ -4,6 +4,9 @@ const margin = {top: 30, right: 20, bottom: 30, left: 50},
     h = 500 - margin.top - margin.bottom;
 
 const padding = 30;
+const h = 500;
+
+const padding = 50;
 const barHeightFactor = 0.1;
 
 //Define the div for the chart
@@ -30,7 +33,7 @@ req.onload=function(){
         .domain([dateStart, dateEnd])
         .range([padding, w - padding]); 
     const yScale = d3.scaleLinear()
-        .domain([0, maxValue])
+        .domain([padding, maxValue])
         .range([h - padding, padding]);
 
     // Define the axes
@@ -43,19 +46,21 @@ req.onload=function(){
     .enter()
     .append("rect")
     .attr("x", (d) => xScale(new Date(d[0]))) //each column placement
-    .attr("y", (d, i) => h - (padding + d[1] * barHeightFactor)) //starts from top left of svg area
+    .attr("y", (d) => yScale(d[1])) //starts from top left of svg area
     .attr("width", 5) //bar width
-    .attr("height", (d, i) => barHeightFactor * d[1])
+    .attr("height", (d, i) => h - padding - yScale(d[1]))
     .attr("fill","blue")
     .attr("class","bar")
-    .attr("data-date", (d,i) => d[0])
+    .attr("data-date", (d => d[0]))
+    .attr("data-gdp", (d => d[1]))
     .on("mouseover", function(d) {		
                 div.transition()		
                     .duration(200)		
                     .style("opacity", .9);		
                 div	.html(d[0] + "<br/>" + d[1])	
                     .style("left", (d3.event.pageX) + "px")		
-                    .style("top", (d3.event.pageY - 28) + "px");	
+                    .style("top", (d3.event.pageY - 28) + "px")
+                    .attr("data-date", d[0]);	
                 })
     .on("mouseout", function(d) {		
             div.transition()		
@@ -66,13 +71,15 @@ req.onload=function(){
     // Add the X Axis
     svg.append("g")
     .attr("class", "x axis")
+    .attr("id", "x-axis")
     .attr("transform", "translate(0," + (h - padding) + ")")
     .call(xAxis);
 
     // Add the Y Axis
     svg.append("g")
     .attr("class", "y axis")
-    .attr("transform", "translate(" + (h - padding) + ",0)")
+    .attr("id", "y-axis")
+    .attr("transform", "translate(" + padding + ",0)")
     .call(yAxis);
 
     // Define the div for the tooltip
@@ -81,6 +88,17 @@ req.onload=function(){
     .attr("class", "tooltip")
     .attr("id","tooltip")				
     .style("opacity", 0);
+
+
+    // Add a chart title
+    svg.append("text")
+    .attr("x", (w / 2))             
+    .attr("y", 20)
+    .attr("text-anchor", "middle")  
+    .attr("id", "title")
+    .style("font-size", "16px") 
+    .style("text-decoration", "underline")  
+    .text("United States GDP");
 
 };
 
