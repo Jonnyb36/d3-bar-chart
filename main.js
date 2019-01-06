@@ -26,25 +26,23 @@ req.onload=function(){
     const dateEnd = new Date(dataset[dataset.length - 1][0]);
 
     // Set the ranges
-    const x = d3.scaleTime()
+    const xScale = d3.scaleTime()
         .domain([dateStart, dateEnd])
         .range([padding, w - padding]); 
-    const y = d3.scaleLinear()
+    const yScale = d3.scaleLinear()
         .domain([0, maxValue])
         .range([h - padding, padding]);
 
     // Define the axes
-    const xAxis = d3.axisBottom(x);
-    const yAxis = d3.axisLeft(y);
-
-    
+    const xAxis = d3.axisBottom(xScale);
+    const yAxis = d3.axisLeft(yScale);
 
     // Define the bar chart
     svg.selectAll("rect")
     .data(dataset)
     .enter()
     .append("rect")
-    .attr("x", (d, i) => i * 5) //each column placement
+    .attr("x", (d) => xScale(new Date(d[0]))) //each column placement
     .attr("y", (d, i) => h - (padding + d[1] * barHeightFactor)) //starts from top left of svg area
     .attr("width", 5) //bar width
     .attr("height", (d, i) => barHeightFactor * d[1])
