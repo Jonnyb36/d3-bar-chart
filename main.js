@@ -1,9 +1,11 @@
 
+/*
 const margin = {top: 30, right: 20, bottom: 30, left: 50},
     w = 1500 - margin.left - margin.right,
     h = 500 - margin.top - margin.bottom;
+*/
 
-const padding = 30;
+const w = 1200;
 const h = 500;
 
 const padding = 50;
